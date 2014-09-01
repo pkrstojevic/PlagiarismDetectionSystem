@@ -1,0 +1,161 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+        <title>Softver za prepoznavanje plagijata u akademskim radovima - Web application / Diplomski rad</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+        <link href="#{request.contextPath}/assets/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="#{request.contextPath}/assets/css/bootswatch.min.css" rel="stylesheet" />
+        <link href="#{request.contextPath}/assets/css/style.css" rel="stylesheet" type="text/css" />
+    </h:head>
+    <h:body>
+        <ui:include src="/WEB-INF/header.xhtml" />
+        <!-- Container begin ======== -->
+        <div class="container">
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2>Provera dva akademska rada</h2>
+                    <ui:fragment rendered="#{mainController.pushNotification == true}">
+                        <div class="alert alert-danger" role="alert">
+                            <h:message for="msg_file_validation" /><br />  
+                            <h:message for="msg_file_validation2" />  
+                        </div>                  
+                    </ui:fragment>                   
+
+                    <div class="panel panel-default">
+                        <h:form id="form" enctype="multipart/form-data">
+                            <div class="panel-body">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="file">Prvi dokument za proveru</label>
+                                        <div class="input-group">
+                                            <input type="text" name="file_name" class="form-control" readonly="true" />
+
+                                            <span class="input-group-btn">
+                                                <span class="btn btn-default btn-file">
+                                                    Izaberite dokument
+                                                    <h:inputFile id="msg_file_validation" value="#{sideCheckDocuments.file}"  validator="#{mainController.validateFile}" />                             
+                                                </span>
+                                            </span>
+
+                                        </div>
+                                        <small><i>Podržani formati su .txt, .pdf, .doc</i></small>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="file">Drugi dokument za proveru</label>
+                                        <div class="input-group">
+                                            <input type="text" name="file_name" class="form-control" readonly="true" />
+
+                                            <span class="input-group-btn">
+                                                <span class="btn btn-default btn-file">
+                                                    Izaberite dokument
+                                                    <h:inputFile id="msg_file_validation2" value="#{sideCheckDocuments.file2}"  validator="#{mainController.validateFile}" />                             
+                                                </span>
+                                            </span>
+
+                                        </div>
+                                        <small><i>Podržani formati su .txt, .pdf, .doc</i></small>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-lg-offset-5">
+                                    <h:commandLink action="#{sideCheckDocuments.upload}" styleClass="btn btn-info btn-lg">
+                                        <span class="glyphicon glyphicon-search"></span> Proverite dokument
+                                    </h:commandLink>
+                                </div>
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+
+
+
+
+
+                <ui:fragment rendered="#{sideCheckDocuments.isCompleted == true}">    
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="col-lg-12">
+                                <div class="panel panel-default" style="margin-top:10px;">
+                                    <div class="panel-body">
+                                        <p>Procenat sličnosti dva dokumenta je: <h:outputText value="#{sideCheckDocuments.similarityScorePercentage}" rendered="#{not empty sideCheckDocuments.similarityScorePercentage}" escape="false" /></p>
+                                        <div class="progress">
+                                            <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="#{sideCheckDocuments.similarityScore}" aria-valuemin="0" aria-valuemax="100" style="width: #{sideCheckDocuments.similarityScorePercentage}">
+                                                <h:outputText value="#{sideCheckDocuments.similarityScorePercentage}" rendered="#{not empty sideCheckDocuments.similarityScorePercentage}" escape="false" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="panel panel-info">
+                                    <div class="panel-heading">Sadržaj dokumenta 1</div>
+                                    <div class="panel-body highlight-doc" style="overflow:scroll; height:346px; overflow-x: hidden;" id="highlight-plugin">
+                                        <h:outputText value="#{sideCheckDocuments.content1}" rendered="#{not empty sideCheckDocuments.content1}" escape="false" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <ui:repeat var="i" value="#{sideCheckDocuments.topWords1}" varStatus="status">
+                                        <h:outputLink class="btn btn-info btn-sm" style="margin: 5px" value="javascript:void($('#highlight-plugin').removeHighlight().highlight('#{i}'));">#{i}</h:outputLink>    
+                                    </ui:repeat>      
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <div class="panel panel-info">
+                                    <div class="panel-heading">Sadržaj dokumenta 2</div>
+                                    <div class="panel-body highlight-doc" style="overflow:scroll; height:346px; overflow-x: hidden;" id="highlight-plugin2">
+                                        <h:outputText value="#{sideCheckDocuments.content2}" rendered="#{not empty sideCheckDocuments.content2}" escape="false" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <ui:repeat var="i" value="#{sideCheckDocuments.topWords2}" varStatus="status">
+                                        <h:outputLink class="btn btn-info btn-sm" style="margin: 5px" value="javascript:void($('#highlight-plugin2').removeHighlight().highlight('#{i}'));">#{i}</h:outputLink>    
+                                    </ui:repeat>    
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="panel panel-default" style="margin-top: 20px;">
+                                    <div class="panel-body">
+                                        <ui:fragment rendered="#{not empty sideCheckDocuments.commonKeyWords}">
+                                            <p>Broj zajedničkih najučestalijih reči: <h:outputText value="#{sideCheckDocuments.countCommonKeyWords}" /></p>
+                                            <ui:repeat var="i" value="#{sideCheckDocuments.commonKeyWords}" varStatus="status">
+                                                <h:outputLink class="btn btn-warning btn-sm" style="margin: 5px" value="javascript:void($('.highlight-doc').removeHighlight().highlight('#{i}'));">#{i}</h:outputLink>    
+                                            </ui:repeat>
+                                        </ui:fragment>
+                                        <ui:fragment rendered="#{empty sideCheckDocuments.commonKeyWords}">
+                                            <h:outputText value="Nema zajedničkih najučestalijih reči."  />
+                                        </ui:fragment>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </ui:fragment>    
+            </div>
+
+
+            <!-- Footer =========================================== -->
+            <ui:include src="/WEB-INF/footer.xhtml" />
+            <!-- ================================================== -->
+
+        </div>
+        <!-- Container end ======== -->
+
+
+        <!-- Bootstrap Javascript - Start -->
+        <script type="text/javascript" src="#{request.contextPath}/assets/js/jquery-latest.min.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/assets/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/assets/js/page_common.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/assets/js/jquery.highlight.js"></script>
+        <!-- Bootstrap Javascript - End -->        
+    </h:body>
+</html>
+

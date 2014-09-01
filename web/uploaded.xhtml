@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Softver za prepoznavanje plagijata u akademskim radovima - Web application / Diplomski rad</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+        <link href="#{request.contextPath}/assets/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="#{request.contextPath}/assets/css/bootswatch.min.css" rel="stylesheet" />
+        <link href="#{request.contextPath}/assets/css/style.css" rel="stylesheet" type="text/css" />
+
+        #{uploadedController.initialization()}
+    </h:head>
+    <h:body>
+        <ui:include src="/WEB-INF/header.xhtml" />
+        <!-- Container begin ======== -->
+        <div class="container">
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2>Provera akademskog rada sa kolekcijom</h2>
+
+                    <div class="col-lg-3">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Najučestalije reči u dokumentu</div>
+                            <div class="panel-body">
+
+                            </div>
+                            <div class="list-group">
+                                <ui:repeat var="i" value="#{uploadedController.topWordsList}" varStatus="status">
+                                    <a class="list-group-item list-group-item-default" href="javascript:void($('#highlight-plugin').removeHighlight().highlight('#{i}'));">#{i}</a>
+                                </ui:repeat>
+                            </div> 
+
+                        </div>
+                        <p></p>
+                    </div>
+
+                    <div class="col-lg-9">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Sadržaj dokumenta</div>
+
+                            <ul class="list-group">
+                                <li class="list-group-item"><strong>Naslov dokumenta: </strong><h:outputText value="#{uploadedController.docTitle}" rendered="#{not empty uploadedController.docTitle}" /></li>
+                                <li class="list-group-item"><strong>Ime autora: </strong><h:outputText value="#{uploadedController.docAuthorName}" rendered="#{not empty uploadedController.docAuthorName}" /></li>
+                                <li class="list-group-item"><strong>Prezime autora: </strong><h:outputText value="#{uploadedController.docAuthorSurname}" rendered="#{not empty uploadedController.docAuthorSurname}" /></li>
+                                <li class="list-group-item"><strong>Godina izdanja: </strong><h:outputText value="#{uploadedController.docCopyright}" rendered="#{not empty uploadedController.docCopyright}" /></li>
+                            </ul>
+
+                            <div class="panel-body" style="overflow:scroll; height:346px; overflow-x: hidden;" id="highlight-plugin">
+                                <h:outputText value="#{uploadedController.getFileContent()}" rendered="#{not empty uploadedController.getFileContent()}" escape="false" />
+                            </div>
+                        </div>   
+                    </div>
+
+                    <div class="col-lg-12">
+                        <h3>Akademski radovi koji sadrže iste najučestalije reči</h3>
+                        <hr />
+                        <ui:repeat var="i" value="#{uploadedController.docSimilarList}" varStatus="status">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">#{i.documentId} | #{i.documentTitle}, #{i.authorFirstname} #{i.authorLastname}, #{i.copyrightYear}
+                                    <div class="pull-right">
+
+                                        <h:link styleClass="btn btn-info btn-xs" outcome="report" >
+                                            <span class="glyphicon glyphicon-search"></span> Proverite dokument
+                                            <f:param name="hiddenOrId" value="#{i.documentId}" />
+                                            <f:param name="hiddenPlId" value="#{uploadedController.doc.documentId}" />
+                                        </h:link>
+
+                                    </div>
+
+                                </div>
+                                <div class="panel-body">
+                                    <strong>Najučestalije reči:</strong> #{i.keywords} <br />
+                                    <strong>Zajedničke najučestalije reči: </strong>
+                                    <ui:repeat var="j" value="#{i.commonKeywordsList}" varStatus="status">#{j} </ui:repeat><br /><br />
+                                    <strong>Naučna oblast:</strong> #{i.academicExpertise.name}
+                                </div>
+                            </div>
+                        </ui:repeat>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer =========================================== -->
+            <ui:include src="/WEB-INF/footer.xhtml" />
+            <!-- ================================================== -->
+
+        </div>
+        <!-- Container end ======== -->
+
+
+        <!-- Bootstrap Javascript - Start -->
+        <script type="text/javascript" src="#{request.contextPath}/assets/js/jquery-latest.min.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/assets/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/assets/js/page_common.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/assets/js/jquery.highlight.js"></script>
+        <!-- Bootstrap Javascript - End -->          
+    </h:body>
+</html>           
