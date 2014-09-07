@@ -30,3 +30,9 @@ function getval(sel) {
 function goBack() {
     window.history.back()
 }
+
+$(function() {
+    $('.keyword').click(function() {
+        $('#highlight-plugin').removeHighlight().highlight(($(this).text()));
+    });
+});

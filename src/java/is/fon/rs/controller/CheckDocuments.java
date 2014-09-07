@@ -74,7 +74,7 @@ public class CheckDocuments {
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(path), "UTF-8"));
         String line;
         while ((line = reader.readLine()) != null) {
-            text += StringUtils.replaceEach(line, new String[]{"&", "\"", "<", ">"}, new String[]{"&amp;", "&quot;", "&lt;", "&gt;"}) + " <br>";
+            text += StringUtils.replaceEach(line, new String[]{"&", "\"", "<", ">"}, new String[]{"&amp;", "&quot;", "&lt;", "&gt;"}) + " <br />";
         }
         return text;
     }
